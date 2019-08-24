@@ -340,10 +340,6 @@
 
           <el-form :model="chargeForm">
 
-            <el-form-item label="挂号收费" label-width="20%" >
-              <el-input v-model="chargeForm.registrationCharge" :disabled="true"></el-input>
-            </el-form-item>
-
             <el-form-item label="总计金额" label-width="20%" >
               <el-input v-model="chargeForm.totalCharge" :disabled="true"></el-input>
             </el-form-item>
@@ -354,6 +350,13 @@
 
             <el-form-item label="实收金额" label-width="20%" >
               <el-input v-model="chargeForm.practicalCharge" :disabled="true"></el-input>
+            </el-form-item>
+
+            <el-form-item label="支付类型" label-width="20%">
+               <el-select v-model="chargeForm.chargeType" style="width: 100%" placeholder="请选择支付类型">
+                  <el-option label="现金" value="chargeInCash"></el-option>
+                  <el-option label="刷卡" value="chargeWithCard"></el-option>
+               </el-select>
             </el-form-item>
 
           </el-form>
@@ -533,10 +536,10 @@ export default {
           dialogFormVisible: false,
 
           chargeForm: {
-            registrationCharge: '',
             totalCharge: '',
             discountCharge: '',
-            practicalCharge: ''
+            practicalCharge: '',
+            chargeType: ''
           }
 
 
