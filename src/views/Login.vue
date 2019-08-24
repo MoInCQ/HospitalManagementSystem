@@ -80,6 +80,8 @@
 import loginApi from "../request/Api";
 import axios from "axios";
 import qs from "qs";
+axios.defaults.withCredentials = true
+
 export default {
   // ....
   data() {
@@ -125,40 +127,40 @@ export default {
   methods: {
     // 提交表单
     submit(formName) {
-      this.$router.push("/Home");
-      // this.$refs[formName].validate(valid => {
-      //   if (valid) {
-      //     axios
-      //       .post(
-      //         "http://192.168.0.7:8080/hims/login",
-      //         qs.stringify(
-      //           { id: this.LoginForm.id, pwd: this.LoginForm.pwd },
-      //           {
-      //             headers: {
-      //               "Content-Type": "application/x-www-form-urlencoded"
-      //             }
-      //           }
-      //         )
-      //       )
-      //       .then(res => {
-      //         console.log(res.data.status);
-      //         if (res.data.status == 200) {
-      //           this.$router.push("/about");
-      //         } 
-      //       });
-      //   } else {
-      //     console.log(res.data.status);
-      //     console.log(res.data.msg);
-      //           this.$notify.error({
-      //             title: res.data.msg,
-      //             //message: 'res.data.msg'
-      //           });
-      //           return false;
+      
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          axios
+            .post(
+              "http://192.168.0.5:8080/hims/auth/login",
+              qs.stringify(
+                { id: this.LoginForm.id, pwd: this.LoginForm.pwd },
+                {
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                  }
+                }
+              )
+            )
+            .then(res => {
+              console.log(res.data.status);
+              if (res.data.status == 200) {
+                this.$router.push("/Home");
+              } 
+            });
+        } else {
+          console.log(res.data.status);
+          console.log(res.data.msg);
+                this.$notify.error({
+                  title: res.data.msg,
+                  //message: 'res.data.msg'
+                });
+                return false;
               
-      //     console.log("submit err");
-      //     return false;
-      //   }
-      // });
+          console.log("submit err");
+          return false;
+        }
+      });
     },
     reset() {
       this.$refs.LoginForm.resetFields();
