@@ -1,0 +1,375 @@
+<template>
+    <div>
+
+      <!-- 单号查询框 -->
+      <el-row style="margin: 0px 0px 30px 10px">
+        <el-col :span="18">
+          <el-input placeholder="请输入内容" v-model="selectKey.value"  style="background-color: #fff;">
+            <el-select v-model="selectKey.type" slot="prepend" placeholder="病历号" :disabled="true" style="width: 130px; ">
+              <!-- <el-option label="病历号" value="medicalRecordID"></el-option>
+              <el-option label="姓名" value="name"></el-option> -->
+
+            </el-select>
+            <el-button slot="append" icon="el-icon-search" @click="selectByPrimaryKey(selectKey)">查询</el-button>
+          </el-input>
+
+        </el-col>
+          
+      </el-row>
+
+      <el-divider></el-divider>
+
+      <el-row  >
+                <!-- 表单 -->
+
+                <el-form ref="form" :model="form" label-width="80px" >
+
+                  <!-- 表单第一行 -->
+                  <el-row >
+                    <el-col :span="6">
+                      <el-form-item label="病历编号" >
+                        <el-input v-model="form.caseHistoryID" :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    
+                    <el-col :span="6">
+                      <el-form-item label="姓名" >
+                        <el-input v-model="form.name"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+
+                    <el-col :span="6">
+                      <el-form-item label="身份证号">
+                        <el-input v-model="form.identityCardID"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6">
+                      <el-form-item label="结算类型">
+                        <el-select v-model="form.chargeType" placeholder="" :disabled="true">
+                          <el-option label="自付" value="selfPay"></el-option>
+                          <el-option label="医保" value="healthInsurance"></el-option>
+                          <el-option label="他付" value="othersPay"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col> 
+      
+                  </el-row>
+
+
+                  <!-- 表单第二行 -->
+                  <el-row>
+
+                    <el-col :span="6">
+                      <el-form-item label="总计金额">
+                        <el-input v-model="form.totalPrice"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6">
+                      <el-form-item label="实付金额">
+                        <el-input v-model="form.practicalCharge"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6">
+                      <el-form-item label="现金支付">
+                        <el-input v-model="form.chargeByCash"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6">
+                      <el-form-item label="账户支付">
+                        <el-input v-model="form.chargeByAccount"  :disabled="true"></el-input>
+                      </el-form-item>
+                    </el-col>
+                 
+                  </el-row>
+
+
+                  <!-- 表单第三行 -->
+                  <el-row >
+                    <el-col :span="6">
+
+                      <el-form-item label="报销金额">
+                        <el-input v-model="form.chargeByInsurance"  :disabled="true"></el-input>
+                      </el-form-item>
+
+                    </el-col>
+                  </el-row>
+
+
+                  
+                  <el-divider></el-divider>
+
+                  <!-- 表单第四行 -->
+                  <el-row style="margin-bottom:30px">
+
+
+                    <el-col :span="6" :offset="18">
+                      <el-button style="float: right" type="primary" round 
+                          @click="submitRegistrationInfo(form)">全额退费</el-button> 
+                    </el-col>
+                  
+                  </el-row>
+                  
+
+
+                </el-form>
+
+
+
+      </el-row >
+      
+      
+      <el-row >
+
+          
+              <!-- 本单收费项目列表 -->
+              
+                    <el-card shadow="hover" >
+
+                        <!-- 列表头部 -->
+                        <div slot="header" class="clearfix">
+                            <el-row style="height:40px">
+                              <el-col span="18">
+                                <div style="font-size:20px; text-align:left; color:#000000; margin:10px 0px 0px 10px" >本号已收费用明细</div>
+                              </el-col>
+
+                              <el-col span="2" >
+
+                                <el-button 
+                                  style="float: right; padding: 3px 0 ; height:40px; text-align:center" 
+                                  type="text"
+                                  icon="el-icon-refresh"
+                                  @click="refreshList()" >刷新列表</el-button>
+
+                              </el-col>
+                              <el-col span="2" >
+
+                                <el-button 
+                                  style="float: right; padding: 3px 0 ; height:40px; text-align:center" 
+                                  type="text"
+                                  icon="el-icon-delete"
+                                  @click="deleteChargeProduct()" >批量退款</el-button>
+
+                              </el-col>
+
+
+                              <el-col span="2" >
+                                <el-button 
+                                  style="float: right; padding: 3px 0 ; height:40px; text-align:center" 
+                                  type="text"
+                                  icon="el-icon-close"
+                                  @click="toggleSelection()" >取消选择</el-button>
+
+                              </el-col>
+
+
+
+         
+
+                            </el-row>
+
+                            
+                            
+
+                        </div>
+
+                  
+                        <el-table
+                          ref="registration_info_list"
+                          :data="reregistrationInfoListData"
+                          highlight-current-row
+                          stripe
+                          border
+                          @current-change="handleCurrentChange"
+                          style="width: 100%">
+
+                          <el-table-column
+                            fixed="left"
+                            type="selection"
+                            width="55">
+                          </el-table-column>
+
+                          <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50"
+                            align="center">
+                          </el-table-column>
+                          
+                          <el-table-column
+                            property="record_num"
+                            label="项目名称"
+                            width="120"
+                            align="center">
+                          </el-table-column>
+                          
+                          <el-table-column
+                            property="name"
+                            label="规格"
+                            width="120"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="sex"
+                            label="单价"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="birthday"
+                            label="数量"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="identity_id"
+                            label="单位"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="invoice_id"
+                            label="服数"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="payment_category"
+                            label="金额"
+                            align="center">
+                          </el-table-column>
+
+                          <el-table-column
+                            property="registration_rank"
+                            label="执行科室"
+                            align="center">
+                          </el-table-column>
+                          
+                        </el-table>
+                  
+                
+                      </el-card>     
+
+      </el-row>
+
+    </div>
+
+</template>
+
+
+<style>
+
+/* 用来设置当前页面element全局table 选中某行时的背景色*/
+.el-table__body tr.current-row>td{
+  background-color: #cdcdcd !important;
+}
+
+
+</style>
+
+
+
+<script>
+
+export default {
+    data() {
+      return {
+        //表格内容
+        reregistrationInfoListData: [{
+            recordNum: '2016-05-02',
+            name: '王小虎0',
+            sex: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            recordNum: '2016-05-04',
+            name: '王小虎1',
+            sex: '上海市普陀区金沙江路 1517 弄'
+          }, {
+            recordNum: '2016-05-01',
+            name: '王小虎2',
+            sex: '上海市普陀区金沙江路 1519 弄'
+          }, {
+            recordNum: '2016-05-03',
+            name: '王小虎3',
+            sex: '上海市普陀区金沙江路 1516 弄'
+          }],
+          currentRow: "",
+
+
+          //表单变量
+          form: {
+
+            caseHistoryID: '',
+            name: '',
+            identityCardID: '',
+            chargeType: '',
+
+
+            totalPrice: '',
+            practicalCharge: '',
+            chargeByCash: '',
+            chargeByAccount: '',
+
+            chargeByInsurance: '',
+
+          },
+
+          // 查询信息
+          selectKey: {
+             type: "",
+             value: ""
+
+          }
+  
+
+
+      };
+    },
+
+
+    methods: {
+
+      //表格--------------------------------------------------------
+      // 表格控制当前选中行
+      handleCurrentChange(val) {
+        this.currentRow = val;
+
+        console.log(this.currentRow.name);
+      },
+
+      // 删除收费项目
+      deleteChargeProduct() {
+        this.$refs.registration_info_list.clearSelection();
+      },
+
+
+      refreshList() {
+        console.log("refresh");
+      },
+
+      // 取消选择
+      toggleSelection() {
+        this.$refs.registration_info_list.clearSelection();
+        console.log("cancel selection");
+      },
+
+
+
+      // 表单--------------------------------------------------------
+      // 提交表单
+      submitRegistrationInfo(form) {
+        console.log(form);
+      },
+
+
+      // 查询框-------------------------------------------------------
+      selectByPrimaryKey(selectKey) {
+        console.log(selectKey);
+      }
+    }
+  }
+</script>
