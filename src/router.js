@@ -16,36 +16,34 @@ import HomePage from "./components/HomePage.vue"
 Vue.use(Router);
 
 export default new Router({
-  routes: [
-    {
-      path: "/Home",
+  routes: [{
+      path: "/home",
       name: "Home",
       component: Home,
-      children:[
-        {
+      children: [{
           path: "Registration",
           name: "Registration",
           component: Registration
         },
         {
-          path:"withdrawRegistration",
-          name:"withdrawRegistration",
-          component:WithdrawRegistration
+          path: "withdrawRegistration",
+          name: "withdrawRegistration",
+          component: WithdrawRegistration
         },
         {
-          path:"charge",
-          name:"charge",
-          component:Charge
+          path: "charge",
+          name: "charge",
+          component: Charge
         },
         {
-          path:"withdrawCharge",
-          name:"withdrawCharge",
-          component:WithdrawCharge
+          path: "withdrawCharge",
+          name: "withdrawCharge",
+          component: WithdrawCharge
         },
         {
-          path:"homePage",
-          name:"homePage",
-          component:HomePage
+          path: "homePage",
+          name: "homePage",
+          component: HomePage
         }
       ]
     },
@@ -56,22 +54,22 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/About.vue")
+        import( /* webpackChunkName: "about" */ "./views/About.vue")
     },
     {
-      path:"/hello",
+      path: "/hello",
       name: "hello",
-      component:Hello
+      component: Hello
     },
     {
-      path:"/",
-      name:"Login",
-      component:Login
+      path: "/",
+      name: "Login",
+      component: Login
     },
     {
-      path:"/Register",
-      name:"Register",
-      component:Register
+      path: "/register",
+      name: "Register",
+      component: Register
     }
 
   ]
