@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <!-- 单号查询框 -->
@@ -9,7 +8,6 @@
             v-model="selectKey.type"
             slot="prepend"
             placeholder="查询类型"
-            @change="getid"
             style="width: 130px; "
           >
             <el-option label="病历号" value="cf_id"></el-option>
@@ -29,13 +27,13 @@
         <!-- 列表头部 -->
         <div slot="header" class="clearfix">
           <el-row style="height:40px">
-            <el-col span="18">
+            <el-col :span="18">
               <div
                 style="font-size:20px; text-align:left; color:#000000; margin:10px 0px 0px 10px"
               >挂号信息列表</div>
             </el-col>
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -43,7 +41,7 @@
                 @click="refreshList()"
               >刷新列表</el-button>
             </el-col>
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -52,7 +50,7 @@
               >批量退号</el-button>
             </el-col>
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -98,7 +96,8 @@
     </el-row>
 
     <!-- 根据“病历号”查询时及查看详情时使用的抽屉 -->
-    <el-drawer :visible.sync="drawer" :direction="rtl" :before-close="handleClose">
+    <!-- <el-drawer :visible.sync="drawer" :direction="rtl" :before-close="handleClose"> -->
+    <el-drawer :visible.sync="drawer" :before-close="handleClose">
       <div>
         <h2 style="margin: 0px 0px 30px 20px">挂号信息</h2>
       </div>
@@ -205,7 +204,13 @@
             <el-form-item label="就诊状态">
               <el-select
                 v-model="registrationForm.treatment_state"
-                @change="$set(registrationForm, registrationForm.treatment_state, $event)"
+                @change="
+                  $set(
+                    registrationForm,
+                    registrationForm.treatment_state,
+                    $event
+                  )
+                "
                 placeholder
                 :disabled="true"
               >
@@ -240,7 +245,9 @@
             <el-form-item label="挂号状态">
               <el-select
                 v-model="registrationForm.is_cancelled"
-                @change="$set(registrationForm, registrationForm.is_cancelled, $event)"
+                @change="
+                  $set(registrationForm, registrationForm.is_cancelled, $event)
+                "
                 placeholder
                 :disabled="true"
               >
@@ -263,19 +270,12 @@
   </div>
 </template>
 
-
-
-
 <style>
 /* 用来设置当前页面element全局table 选中某行时的背景色*/
 .el-table__body tr.current-row > td {
   background-color: #cdcdcd !important;
 }
 </style>
-
-
-
-
 
 <script>
 import axios from "axios";
@@ -288,21 +288,21 @@ export default {
     return {
       //表格内容
       reregistrationInfoListData: [
-        {
-          cf_id: "",
-          name: "",
-          gender: "",
-          id_card: "",
-          create_time: "",
-          clinic_date: "",
-          payment_type: "",
-          dpt_name: "",
-          dct_name: "",
-          source: "",
-          //payment_state: "",
-          treatment_state: "",
-          is_cancelled: ""
-        }
+        // {
+        //   cf_id: "",
+        //   name: "",
+        //   gender: "",
+        //   id_card: "",
+        //   create_time: "",
+        //   clinic_date: "",
+        //   payment_type: "",
+        //   dpt_name: "",
+        //   dct_name: "",
+        //   source: "",
+        //   //payment_state: "",
+        //   treatment_state: "",
+        //   is_cancelled: ""
+        // }
       ],
       currentRow: "",
 

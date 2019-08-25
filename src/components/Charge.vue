@@ -189,13 +189,13 @@
         <!-- 列表头部 -->
         <div slot="header" class="clearfix">
           <el-row style="height:40px">
-            <el-col span="16">
+            <el-col :span="16">
               <div
                 style="font-size:20px; text-align:left; color:#000000; margin:10px 0px 0px 10px"
               >本号收费项目列表</div>
             </el-col>
 
-            <!-- <el-col span="2">
+            <!-- <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -204,7 +204,7 @@
               >刷新列表</el-button>
             </el-col>-->
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -213,7 +213,7 @@
               >添加项目</el-button>
             </el-col>
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -300,7 +300,8 @@
     </el-dialog>
 
     <!-- 添加收费项目使用的抽屉 -->
-    <el-drawer :visible.sync="drawer" :direction="rtl" :before-close="handleClose">
+    <!-- <el-drawer :visible.sync="drawer" :direction="rtl" :before-close="handleClose"> -->
+    <el-drawer :visible.sync="drawer" :before-close="handleClose">
       <div>
         <h2 style="margin: 0px 0px 30px 20px">新增收费项目</h2>
       </div>
@@ -361,19 +362,12 @@
   </div>
 </template>
 
-
-
-
 <style>
 /* 用来设置当前页面element全局table 选中某行时的背景色*/
 .el-table__body tr.current-row > td {
   background-color: #cdcdcd !important;
 }
 </style>
-
-
-
-
 
 <script>
 import axios from "axios";

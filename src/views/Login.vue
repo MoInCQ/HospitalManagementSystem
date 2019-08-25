@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="login">
     <el-row style="height:50px"></el-row>
     <el-container>
       <el-main>
@@ -8,7 +8,7 @@
             <el-card>
               <el-row>
                 <el-col :span="18">
-                  <el-image :src="imageUrl" style="height:500px" :fit="cover"></el-image>
+                  <el-image :src="imageUrl" style="height:500px" :fit="fit"></el-image>
                 </el-col>
 
                 <el-col :span="5" :offset="1">
@@ -63,13 +63,13 @@
 </template>
 
 <script>
-import loginApi from "../request/Api";
 import axios from "axios";
 import qs from "qs";
 import Api from "../http/api";
 axios.defaults.withCredentials = true;
 
 export default {
+  name: "login",
   // ....
   data() {
     var validatePass = (rule, value, callback) => {
@@ -108,7 +108,8 @@ export default {
         ]
       },
 
-      imageUrl: require("../assets/loginPic.jpg")
+      imageUrl: require("../assets/loginPic.jpg"),
+      fit: "cover"
     };
   },
   methods: {
@@ -136,17 +137,6 @@ export default {
                 this.$router.push("/home");
               }
             });
-        } else {
-          console.log(res.data.status);
-          console.log(res.data.msg);
-          this.$notify.error({
-            title: res.data.msg
-            //message: 'res.data.msg'
-          });
-          return false;
-
-          console.log("submit err");
-          return false;
         }
       });
     },

@@ -1,51 +1,51 @@
 <template>
-  <el-container>
-    <el-form
-      :model="ruleForm"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="0"
-      class="login-form"
-      align="center"
-    >
-      <h3>注册</h3>
+  <div id="register">
+    <el-container>
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="0"
+        class="login-form"
+        align="center"
+      >
+        <h3>注册</h3>
 
-      <el-form-item prop="name">
-        <el-input type="text" v-model="ruleForm.name" placeholder="请输入电话号码或者电子邮箱"></el-input>
-      </el-form-item>
-
-      <el-form-item prop="pwd">
-        <el-input type="password" v-model="ruleForm.pwd" placeholder="请输入密码"></el-input>
-      </el-form-item>
-
-      <el-form-item prop="checkPass">
-        <el-input type="password" v-model="ruleForm.checkPass" placeholder="请再次输入密码"></el-input>
-      </el-form-item>
-
-      <el-form-item prop="idCard">
-        <el-input type="text" v-model="ruleForm.idCard" placeholder="请输入你的身份证号码"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-form-item prop="type">
-          <el-select v-model="ruleForm.type" placeholder="请选择你的身份">
-            <el-option label="护士" value="NURSE"></el-option>
-            <el-option label="管理员" value="ADMIN"></el-option>
-            <el-option label="病人" value="PATIENT"></el-option>
-            <el-option label="医生" value="DOCTOR"></el-option>
-          </el-select>
+        <el-form-item prop="name">
+          <el-input type="text" v-model="ruleForm.name" placeholder="请输入电话号码或者电子邮箱"></el-input>
         </el-form-item>
 
-        <el-button
-          type="primary"
-          class="submitBtn"
-          @click.native.prevent="submitForm('ruleForm')"
-        >注册</el-button>
-      </el-form-item>
-    </el-form>
-  </el-container>
+        <el-form-item prop="pwd">
+          <el-input type="password" v-model="ruleForm.pwd" placeholder="请输入密码"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="checkPass">
+          <el-input type="password" v-model="ruleForm.checkPass" placeholder="请再次输入密码"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="idCard">
+          <el-input type="text" v-model="ruleForm.idCard" placeholder="请输入你的身份证号码"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-form-item prop="type">
+            <el-select v-model="ruleForm.type" placeholder="请选择你的身份">
+              <el-option label="护士" value="NURSE"></el-option>
+              <el-option label="管理员" value="ADMIN"></el-option>
+              <el-option label="病人" value="PATIENT"></el-option>
+              <el-option label="医生" value="DOCTOR"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-button
+            type="primary"
+            class="submitBtn"
+            @click.native.prevent="submitForm('ruleForm')"
+          >注册</el-button>
+        </el-form-item>
+      </el-form>
+    </el-container>
+  </div>
 </template>
-
-
 
 <script>
 import axios from "axios";
@@ -54,6 +54,7 @@ import Api from "../http/api";
 axios.defaults.withCredentials = true;
 
 export default {
+  name: "register",
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === "") {
