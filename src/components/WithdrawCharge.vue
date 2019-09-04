@@ -112,13 +112,13 @@
         <!-- 列表头部 -->
         <div slot="header" class="clearfix">
           <el-row style="height:40px">
-            <el-col span="18">
+            <el-col :span="18">
               <div
                 style="font-size:20px; text-align:left; color:#000000; margin:10px 0px 0px 10px"
               >本号已收费用明细</div>
             </el-col>
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -126,7 +126,7 @@
                 @click="refreshList()"
               >刷新列表</el-button>
             </el-col>
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -135,7 +135,7 @@
               >批量退款</el-button>
             </el-col>
 
-            <el-col span="2">
+            <el-col :span="2">
               <el-button
                 style="float: right; padding: 3px 0 ; height:40px; text-align:center"
                 type="text"
@@ -148,7 +148,7 @@
 
         <el-table
           ref="registration_info_list"
-          :data="reregistrationInfoListData"
+          :data="registrationInfoListData"
           highlight-current-row
           stripe
           border
@@ -159,27 +159,24 @@
 
           <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
-          <el-table-column property="record_num" label="项目名称" width="120" align="center"></el-table-column>
+          <el-table-column property="name" label="项目名称" width="120" align="center"></el-table-column>
 
-          <el-table-column property="name" label="规格" width="120" align="center"></el-table-column>
+          <el-table-column property="type" label="规格" width="120" align="center"></el-table-column>
 
-          <el-table-column property="sex" label="单价" align="center"></el-table-column>
+          <el-table-column property="price" label="单价" align="center"></el-table-column>
 
-          <el-table-column property="birthday" label="数量" align="center"></el-table-column>
+          <el-table-column property="num" label="数量" align="center"></el-table-column>
 
-          <el-table-column property="identity_id" label="单位" align="center"></el-table-column>
+          <el-table-column property="uage" label="单位" align="center"></el-table-column>
 
-          <el-table-column property="invoice_id" label="服数" align="center"></el-table-column>
+          <el-table-column property="note" label="服数" align="center"></el-table-column>
 
-          <el-table-column property="payment_category" label="金额" align="center"></el-table-column>
-
-          <el-table-column property="registration_rank" label="执行科室" align="center"></el-table-column>
+          <el-table-column property="department" label="执行科室" align="center"></el-table-column>
         </el-table>
       </el-card>
     </el-row>
   </div>
 </template>
-
 
 <style>
 /* 用来设置当前页面element全局table 选中某行时的背景色*/
@@ -188,37 +185,25 @@
 }
 </style>
 
-
-
 <script>
 import axios from "axios";
 import qs from "qs";
-axios.defaults.withCredentials = true
+import Api from "../http/api";
+axios.defaults.withCredentials = true;
 
 export default {
   data() {
     return {
       //表格内容
-      reregistrationInfoListData: [
+      registrationInfoListData: [
         {
-          recordNum: "2016-05-02",
-          name: "王小虎0",
-          sex: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          recordNum: "2016-05-04",
-          name: "王小虎1",
-          sex: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          recordNum: "2016-05-01",
-          name: "王小虎2",
-          sex: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          recordNum: "2016-05-03",
-          name: "王小虎3",
-          sex: "上海市普陀区金沙江路 1516 弄"
+          name: "",
+          type: "",
+          price: "",
+          num: "",
+          uage: "",
+          note: "",
+          department: ""
         }
       ],
       currentRow: "",
@@ -235,33 +220,183 @@ export default {
         chargeByCash: "",
         chargeByAccount: "",
 
-        chargeByInsurance: ""
+        chargeByInsurance: "",
+
+        // 处方单号
+        prescriptionID: ""
       },
 
       // 查询信息
       selectKey: {
         type: "",
         value: ""
-      }
+      },
+      // 选中的药物
+      selectedMedications: []
     };
   },
-
   methods: {
     //表格--------------------------------------------------------
     // 表格控制当前选中行
     handleCurrentChange(val) {
       this.currentRow = val;
-
-      console.log(this.currentRow.name);
+      this.selectedMedications.push(val);
+      //this.selectedMedications.val;
     },
 
-    // 删除收费项目
-    deleteChargeProduct() {
-      this.$refs.registration_info_list.clearSelection();
+    async postDataToSever(mdc_id) {
+      await axios
+        .post(
+          Api.removeMedicationUrl,
+          qs.stringify(
+            {
+              cf_id: this.selectKey.value,
+              mdc_id: mdc_id
+            },
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }
+          )
+        )
+        .then(
+          res => {
+            this.registrationInfoListData = res.data.data;
+          },
+          err => {
+            console.log(err);
+          }
+        )
+        .catch(err => {
+          console.log(err);
+        });
     },
 
+    // 批量退款 // 判断选中的
+    async deleteChargeProduct() {
+      // 先表面删除
+      this.selectedMedications = this.$refs.registration_info_list.selection;
+      console.log(
+        "this.selectedMedications.length: " + this.selectedMedications.length
+      );
+      const selectedOnes = this.selectedMedications;
+      if (selectedOnes) {
+        selectedOnes.forEach((column, index) => {
+          this.registrationInfoListData.forEach((c, i) => {
+            if (column.name === c.name) {
+              this.registrationInfoListData.splice(i, 1);
+              //this.registrationInfoListData.pop(c);
+            }
+          });
+        });
+      }
+
+      //post data
+      //a0d4d0a82d127e6c3ddb7cbe09e159d9
+      let mdcIds = "";
+      console.log(
+        "selectedMedications: " + JSON.stringify(this.selectedMedications)
+      );
+      this.selectedMedications.forEach(item => {
+        console.log(item.mdc_id);
+        mdcIds += ":" + item.mdc_id;
+      });
+      mdcIds = mdcIds.substring(1, mdcIds.length);
+      console.log("mdcIds: " + mdcIds);
+
+      // post
+
+      axios
+        .post(
+          Api.removeMedicationUrl,
+          qs.stringify(
+            {
+              cf_id: this.selectKey.value,
+              mdc_ids: mdcIds
+            },
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }
+          )
+        )
+        .then(
+          res => {
+            this.registrationInfoListData = res.data.data;
+          },
+          err => {
+            console.log(err);
+          }
+        )
+        .catch(err => {
+          console.log(err);
+        });
+
+      //refresh list
+      this.$options.methods.refreshList();
+
+      // axios
+      //   .post(
+      //     Api.removeMedicationUrl,
+      //     qs.stringify(
+      //       {
+      //         cf_id: this.selectKey.value,
+      //         mdc_id: this
+      //       },
+      //       {
+      //         headers: {
+      //           "Content-Type": "application/x-www-form-urlencoded"
+      //         }
+      //       }
+      //     )
+      //   )
+      //   .then(
+      //     res => {
+      //       this.registrationInfoListData = res.data.data;
+      //     },
+      //     err => {
+      //       console.log(err);
+      //     }
+      //   )
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
+      // refresh
+    },
+
+    // 刷新收费项目
     refreshList() {
       console.log("refresh");
+
+      axios
+        .post(
+          Api.queryMedicationsUrl,
+          qs.stringify(
+            {
+              cf_id: this.selectKey.value
+            },
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }
+          )
+        )
+
+        .then(
+          res => {
+            this.registrationInfoListData = res.data.data;
+          },
+
+          err => {
+            console.log(err);
+          }
+        )
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 取消选择
@@ -270,11 +405,44 @@ export default {
       console.log("cancel selection");
     },
 
-
     // 表单--------------------------------------------------------
     // 提交表单
     submitWithdrawchargeInfo(form) {
+      //post
+      axios
+        .post(
+          Api.fullRefundPrescriptionUrl,
+          qs.stringify(
+            {
+              cf_id: this.selectKey.value
+            },
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            }
+          )
+        )
 
+        .then(
+          res => {
+            //this.registrationInfoListData = res.data.data;
+            if (res.data.status == 200) {
+              this.$message({
+                showClose: true,
+                message: "退款成功",
+                type: "success"
+              });
+            }
+          },
+
+          err => {
+            console.log(err);
+          }
+        )
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 查询框-------------------------------------------------------
@@ -284,7 +452,7 @@ export default {
       // 查询
       axios
         .post(
-          "http://192.168.0.5:8080/hims/prescription/search",
+          Api.searchPrescriptionUrl,
           qs.stringify(
             {
               cf_id: this.selectKey.value
@@ -307,7 +475,20 @@ export default {
             this.form.totalPrice = res.data.data.total_amount;
             this.form.practicalCharge = res.data.data.real_amount;
 
+            if (res.data.data.payment_type == "现金") {
+              this.form.chargeByCash = res.data.data.real_amount;
+              this.form.chargeByAccount = 0;
+            } else {
+              this.form.chargeByCash = 0;
+              this.form.chargeByAccount = res.data.data.real_amount;
+            }
 
+            this.form.chargeByInsurance =
+              res.data.data.total_amount - res.data.data.real_amount;
+
+            this.form.prescriptionID = res.data.data.psp_id;
+
+            console.log(this.form.prescriptionID);
           },
 
           err => {
@@ -318,6 +499,8 @@ export default {
         .catch(err => {
           reject(err);
         });
+
+      this.$options.methods.refreshList.bind(this)();
     }
   }
 };
